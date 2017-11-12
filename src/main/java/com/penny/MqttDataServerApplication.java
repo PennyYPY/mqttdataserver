@@ -19,9 +19,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.PrintWriter;
 
 @SpringBootApplication
 public class MqttDataServerApplication {
@@ -49,10 +47,8 @@ public class MqttDataServerApplication {
 	@Bean
 	public IntegrationFlow mqttInFlow(){
 
-		String message = String.valueOf(IntegrationFlows.from(mqttInbound()).transform(p -> p+"").get());
-
-		System.out.println(message);
-
+		//消息在栈中的地址；
+		String messag = String.valueOf(IntegrationFlows.from(mqttInbound()).transform(p -> p+"").get());
 		return IntegrationFlows.from(mqttInbound())
 				.transform(p -> p+"(佩颖发送的消息)")
 				.handle(handler())
@@ -65,13 +61,14 @@ public class MqttDataServerApplication {
 		return loggingHandler;
 	}
 
-	/**入站*/
+	/**入站适配器*/
 	@Bean
 	public MessageProducerSupport mqttInbound(){
-		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("消费者",mqttPahoClientFactory(),"/test/topic");
+		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("消费者",mqttPahoClientFactory(),"/test/#");
 		adapter.setCompletionTimeout(5000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
+
 		return adapter;
 	}
 
@@ -81,21 +78,25 @@ public class MqttDataServerApplication {
 		return new MessageHandler() {
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
-
 				String sMsg = message.getPayload().toString();
+				if (sMsg.equals("佩颖")){
+					mqttOutFlow();
+				}
+
 				System.out.println("设备发送的消息："+sMsg);
 
 			}
 		};
 	}
 
-
 	/**
 	 * 配置Producer
 	 * */
+	@Bean
 	public IntegrationFlow mqttOutFlow(){
 
 		return IntegrationFlows.from(outChannel())
+				.transform(p -> p +"发送给MQTT的")
 				.handle(mqttOutbound())
 				.get();
 	}

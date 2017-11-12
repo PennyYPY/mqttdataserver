@@ -14,22 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SubscribeController {
 
-    private final static Logger logger = LoggerFactory.getLogger(SubscribeController.class);
 
-
-    @GetMapping(value = "/pubMessage")
-    public String pubMessage(){
-        String sMsg = null;
-
-        MessageHandler messageHandler = new MessageHandler() {
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-//               sMsg = message.getPayload().toString();
-            }
-        };
-
-        return sMsg;
-
-    }
 
 }
