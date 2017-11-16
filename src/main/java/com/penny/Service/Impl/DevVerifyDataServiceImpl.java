@@ -20,5 +20,6 @@ public class DevVerifyDataServiceImpl implements DevVerifyDataService {
     @Override
     public DevVerifyData saveDevVerifyData(DevVerifyData devVerifyData) {
         return devVerifyDataRepository.save(devVerifyData);
+
     }
 }
