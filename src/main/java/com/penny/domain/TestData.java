@@ -1,24 +1,28 @@
 package com.penny.domain;
 
 
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by Administrator on 2017/11/10.
+ *
+ * 测试数据
  */
 
-
+@Entity
+@Table(name = "test_data")
 public class TestData {
 
-   
+   @Id
+   @GeneratedValue
     private Integer id;
 
     public String topic;
 
-    public String payLoad;
+    public String payload;
 
     public Integer getId() {
         return id;
@@ -36,11 +40,11 @@ public class TestData {
         this.topic = topic;
     }
 
-    public String getPayLoad() {
-        return payLoad;
+    public String getPayload() {
+        return payload;
     }
 
-    public void setPayLoad(String payLoad) {
-        this.payLoad = payLoad;
+    public void setPayload(String payload) {
+        this.payload = payload;
     }
 }
