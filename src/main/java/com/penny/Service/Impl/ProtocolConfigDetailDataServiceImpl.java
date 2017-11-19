@@ -1,7 +1,7 @@
 package com.penny.Service.Impl;
 
-import com.penny.Repository.ProtocolConfigDataRepository;
-import com.penny.Service.DataSaveService.ProtocolConfigDataService;
+import com.penny.Repository.ProtocolConfigDetailDataRepository;
+import com.penny.Service.DataSaveService.ProtocolConfigDetailDataService;
 import com.penny.domain.ProtocolConfigDetailData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class ProtocolConfigDataServiceImpl implements ProtocolConfigDataService{
+public class ProtocolConfigDetailDataServiceImpl implements ProtocolConfigDetailDataService{
 
     @Autowired
-    private ProtocolConfigDataRepository protocolConfigDataRepository;
+    private ProtocolConfigDetailDataRepository protocolConfigDetailDataRepository;
 
     @Override
     public ProtocolConfigDetailData saveProtocolConfigData(ProtocolConfigDetailData protocolConfigDetailData) {
-        return protocolConfigDataRepository.save(protocolConfigDetailData);
+        return protocolConfigDetailDataRepository.save(protocolConfigDetailData);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 /**
- * Created by Administrator on 2017/11/14.
+ * Created by Penny on 2017/11/14.
  *
  * 设备校验表
  */
@@ -17,17 +17,11 @@ import java.util.Date;
 public class DevVerifyData {
 
     @Id
-    @GeneratedValue
     private String id;
-
     private String snCode;
-
     private String checkCode;
-
     private Date generateTime;
-
     private String protocolVersion;
-
     private String topic;
 
     public String getId() {

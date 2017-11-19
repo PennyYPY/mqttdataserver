@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/11/13.
+ * Created by Penny on 2017/11/13.
  * 设备报警表
  */
 @Entity
@@ -18,15 +18,17 @@ public class DevAlarmData {
     @Id
     @GeneratedValue
     private String id;
-    private String snCode;
-    private String protocolVersion;
-    private Integer offset;
+    private String alarmPayload;
+    private String alarmTopic;
+    private Date alarmTime;
     private String dataName;
     private BigDecimal dataValue;
-    private Date alarmTimel;
-    private int isDeal;
-    private String transactor;
     private Date dealTime;
+    private Integer isDeal;
+    private Integer offset;
+    private String protocolVersion;
+    private String snCode;
+    private String transactor;
 
     public String getId() {
         return id;
@@ -36,28 +38,28 @@ public class DevAlarmData {
         this.id = id;
     }
 
-    public String getSnCode() {
-        return snCode;
+    public String getAlarmPayload() {
+        return alarmPayload;
     }
 
-    public void setSnCode(String snCode) {
-        this.snCode = snCode;
+    public void setAlarmPayload(String alarmPayload) {
+        this.alarmPayload = alarmPayload;
     }
 
-    public String getProtocolVersion() {
-        return protocolVersion;
+    public String getAlarmTopic() {
+        return alarmTopic;
     }
 
-    public void setProtocolVersion(String protocolVersion) {
-        this.protocolVersion = protocolVersion;
+    public void setAlarmTopic(String alarmTopic) {
+        this.alarmTopic = alarmTopic;
     }
 
-    public Integer getOffset() {
-        return offset;
+    public Date getAlarmTime() {
+        return alarmTime;
     }
 
-    public void setOffset(Integer offset) {
-        this.offset = offset;
+    public void setAlarmTime(Date alarmTime) {
+        this.alarmTime = alarmTime;
     }
 
     public String getDataName() {
@@ -76,12 +78,12 @@ public class DevAlarmData {
         this.dataValue = dataValue;
     }
 
-    public Date getAlarmTimel() {
-        return alarmTimel;
+    public Date getDealTime() {
+        return dealTime;
     }
 
-    public void setAlarmTimel(Date alarmTimel) {
-        this.alarmTimel = alarmTimel;
+    public void setDealTime(Date dealTime) {
+        this.dealTime = dealTime;
     }
 
     public int getIsDeal() {
@@ -92,19 +94,35 @@ public class DevAlarmData {
         this.isDeal = isDeal;
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public String getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(String protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
+    public String getSnCode() {
+        return snCode;
+    }
+
+    public void setSnCode(String snCode) {
+        this.snCode = snCode;
+    }
+
     public String getTransactor() {
         return transactor;
     }
 
     public void setTransactor(String transactor) {
         this.transactor = transactor;
-    }
-
-    public Date getDealTime() {
-        return dealTime;
-    }
-
-    public void setDealTime(Date dealTime) {
-        this.dealTime = dealTime;
     }
 }

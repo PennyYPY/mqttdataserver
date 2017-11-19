@@ -2,6 +2,7 @@ package com.penny.utils;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Penny on 2017/11/13.
@@ -10,19 +11,16 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  * connect()用来连接数据库
  * publish()用来发布数据
  */
-
-public class ServerService {
-
+public class ServerServiceUtil {
     private MqttClient client;
     private MqttTopic topic;
     private String Host = "tcp://47.94.242.70:61613";
-    private String clientId = "test";
+    private String clientId = "server";
     public MqttMessage message;
     public String topTopic = "/China/HuBei";
-    private String msgTOPIC = "/test/topic";
 
     /**构造方法ServerService()：通过MqttClient连接broker*/
-    public ServerService()throws MqttException{
+    public ServerServiceUtil()throws MqttException{
         client = new MqttClient(Host,clientId,new MemoryPersistence());
         connect();
     }
@@ -36,16 +34,17 @@ public class ServerService {
         options.setConnectionTimeout(10);
         options.setKeepAliveInterval(20);
         try {
-            client.setCallback(new PushCallBack());
+            client.setCallback(new PushCallBackUtil());
             client.connect(options);
-            topic = client.getTopic(topTopic+msgTOPIC);
+//            topic = client.getTopic(topTopic);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     /**publish():发布消息方法*/
-    public void publish(MqttMessage message) throws MqttException{
+    public void publish(MqttMessage message,String secondTopic) throws MqttException{
+        topic = client.getTopic(topTopic+secondTopic);
         MqttDeliveryToken token = topic.publish(message);
         token.waitForCompletion();
         System.out.println("发布完成? "+token.isComplete());

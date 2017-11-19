@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 /**
- * Created by Administrator on 2017/11/13.
+ * Created by Penny on 2017/11/13.
  *
  * 设备实时数据表
  */
@@ -16,12 +16,10 @@ import java.math.BigDecimal;
 public class DevOnlineData {
 
     @Id
-    @GeneratedValue
     private String id;
     private String snCode;
     private String protocolVersion;
     private Integer offset;
-    private String dataName;
     private BigDecimal dataValue;
 
     public String getId() {
@@ -54,14 +52,6 @@ public class DevOnlineData {
 
     public void setOffset(Integer offset) {
         this.offset = offset;
-    }
-
-    public String getDataName() {
-        return dataName;
-    }
-
-    public void setDataName(String dataName) {
-        this.dataName = dataName;
     }
 
     public BigDecimal getDataValue() {

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/11/15.
+ * Created by Penny on 2017/11/15.
  */
 @Entity
 @Table(name = "protocol_config_master")
@@ -16,13 +16,9 @@ public class ProtocolConfigMasterData {
     @Id
     @GeneratedValue
     private String id;
-
     private String snCode;
-
     private String protocolVersion;
-
     private Integer isUsed;
-
     private Date usedTime;
 
     public String getId() {

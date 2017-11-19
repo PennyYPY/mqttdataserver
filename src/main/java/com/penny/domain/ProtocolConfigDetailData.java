@@ -7,30 +7,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Administrator on 2017/11/14.
+ * Created by Penny on 2017/11/14.
  *
  *
  */
 @Entity
-@Table(name = "device_protocol_config_detail")
+@Table(name = "protocol_config_detail")
 public class ProtocolConfigDetailData {
 
     @Id
-    @GeneratedValue
     private String id;
-
     private String snCode;
-
     private String protocolVersion;
-
     private Integer offset;
-
     private String dataName;
-
-    private int isVisible;
-
-    private int isAlarmed;
-
+    private Integer isVisible;
+    private Integer isAlarmed;
     private String deleted;
 
     public String getId() {

@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttTopic;
  * 接收到已经发布的Qos1或Qos2消息的传递令牌时调用
  * */
 
-public class PushCallBack implements MqttCallback{
+public class PushCallBackUtil implements MqttCallback{
     @Override
     public void connectionLost(Throwable throwable) {
         //连接丢失后，在这里重新连接

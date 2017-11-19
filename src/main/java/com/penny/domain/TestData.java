@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Administrator on 2017/11/10.
+ * Created by Penny on 2017/11/10.
  *
  * 测试数据
  */

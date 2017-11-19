@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by Administrator on 2017/11/14.
  * 设备协议配置接口
  */
-public interface ProtocolConfigDataRepository extends JpaRepository<ProtocolConfigDetailData,String>{
+public interface ProtocolConfigDetailDataRepository extends JpaRepository<ProtocolConfigDetailData,String>{
 
 }
