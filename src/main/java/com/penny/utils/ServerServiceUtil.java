@@ -16,7 +16,6 @@ public class ServerServiceUtil {
     private MqttTopic topic;
     private String Host = "tcp://47.94.242.70:61613";
     private String clientId = "server";
-    public MqttMessage message;
     public String topTopic = "/China/HuBei";
 
     /**构造方法ServerService()：通过MqttClient连接broker*/
@@ -24,7 +23,6 @@ public class ServerServiceUtil {
         client = new MqttClient(Host,clientId,new MemoryPersistence());
         connect();
     }
-
     /**connect()：对连接broker进行基本配置*/
     public void connect(){
         MqttConnectOptions options = new MqttConnectOptions();
@@ -49,5 +47,4 @@ public class ServerServiceUtil {
         token.waitForCompletion();
         System.out.println("发布完成? "+token.isComplete());
     }
-
 }

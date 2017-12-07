@@ -30,19 +30,14 @@ public class PushCallBackUtil implements MqttCallback{
 
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-
         //订阅之后会执行到这里
         System.out.println("接收到的消息："+mqttMessage.getPayload().toString());
         System.out.println("接收消息的Qos："+mqttMessage.getQos());
-
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
         //publish之后会执行到这里
         System.out.println("传输完成");
-
-
     }
 }

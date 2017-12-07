@@ -22,7 +22,6 @@ public class DevVerifyData {
     private String checkCode;
     private Date generateTime;
     private String protocolVersion;
-    private String topic;
 
     public String getId() {
         return id;
@@ -62,13 +61,5 @@ public class DevVerifyData {
 
     public void setProtocolVersion(String protocolVersion) {
         this.protocolVersion = protocolVersion;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 }

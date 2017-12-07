@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Penny on 2017/11/13.
@@ -12,15 +13,16 @@ import java.math.BigDecimal;
  * 设备实时数据表
  */
 @Entity
-@Table(name = "device_online_data")
-public class DevOnlineData {
+@Table(name = "historical_data")
+public class HistoricalData {
 
     @Id
     private String id;
     private String snCode;
     private String protocolVersion;
-    private Integer offset;
-    private BigDecimal dataValue;
+    private String deviceData;
+    private Date dataTime;
+    private Integer offsetNumber;
 
     public String getId() {
         return id;
@@ -46,19 +48,27 @@ public class DevOnlineData {
         this.protocolVersion = protocolVersion;
     }
 
-    public Integer getOffset() {
-        return offset;
+    public String getDeviceData() {
+        return deviceData;
     }
 
-    public void setOffset(Integer offset) {
-        this.offset = offset;
+    public void setDeviceData(String deviceData) {
+        this.deviceData = deviceData;
     }
 
-    public BigDecimal getDataValue() {
-        return dataValue;
+    public Date getDataTime() {
+        return dataTime;
     }
 
-    public void setDataValue(BigDecimal dataValue) {
-        this.dataValue = dataValue;
+    public void setDataTime(Date dataTime) {
+        this.dataTime = dataTime;
+    }
+
+    public Integer getOffsetNumber() {
+        return offsetNumber;
+    }
+
+    public void setOffsetNumber(Integer offsetNumber) {
+        this.offsetNumber = offsetNumber;
     }
 }

@@ -1,6 +1,6 @@
 package com.penny.Repository;
 
-import com.penny.domain.DevOnlineData;
+import com.penny.domain.HistoricalData;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * 设备实时数据接口
  */
-public interface DevOnlineDataRepository extends JpaRepository<DevOnlineData,String> {
-
-
+public interface HistoricalDataRepository extends JpaRepository<HistoricalData,String> {
 
 }
