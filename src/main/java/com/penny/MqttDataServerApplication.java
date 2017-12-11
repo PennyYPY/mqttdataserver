@@ -65,6 +65,17 @@ public class MqttDataServerApplication {
 		MyGateway gateway = context.getBean(MyGateway.class);
 		gateway.sentToMqtt("服务器运行，您好！");
 
+//		try {
+////			ServerServiceUtil serverServiceUtil = new ServerServiceUtil();
+////			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/runtime/switch");
+////			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/"+"HMITest001"+"/DataSaveDone");
+//
+//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/runtime/switch");
+//		} catch (MqttException e) {
+//			e.printStackTrace();
+//		}
+
+
 	}
 
 	/**
@@ -128,7 +139,6 @@ public class MqttDataServerApplication {
 				/**
 				 * 处理消息时的服务；
 				 * */
-
 				String topic = message.getHeaders().get("mqtt_topic").toString();
 				String sMsg = message.getPayload().toString();
 
@@ -138,7 +148,7 @@ public class MqttDataServerApplication {
 
 				if (thirdTopic.equals("sys")){
 
-					switch (topic){
+					switch (topic) {
 						/**1、设备配置数据存储*/
 						case "China/HuBei/sys/reg":
 							String[] rMsg = sMsg.split("_");
@@ -146,7 +156,7 @@ public class MqttDataServerApplication {
 							String rCheckCode = rMsg[1];
 							String rProtocolVersion = rMsg[2];
 							/**存储设备配置相应数据*/
-							saveDevVerifyData(rSnCode,rCheckCode,rProtocolVersion);
+							saveDevVerifyData(rSnCode, rCheckCode, rProtocolVersion);
 							System.out.println("收到:" + topic + "  " + rSnCode + rCheckCode + rProtocolVersion);
 							break;
 						/**2、设备数据存储请求*/
@@ -158,33 +168,37 @@ public class MqttDataServerApplication {
 							String dsHistoricalMsg = dsMsg[2];
 							int checkCode = dsMsg.length - 1;
 
-							for (int i = 3;i <= dsMsg.length - 2;i++){
-
-								dsHistoricalMsg =dsHistoricalMsg+"_"+ dsMsg[i];
-
+							for (int i = 3; i <= dsMsg.length - 2; i++) {
+								dsHistoricalMsg = dsHistoricalMsg + "_" + dsMsg[i];
 							}
 
-							System.out.println("收到:" + topic + " " + dsSnCode+"  " + dsProtocolVersion+"  "+ dsMsg[checkCode]);
+							System.out.println("收到:" + topic + " " + dsSnCode + "  " + dsProtocolVersion + "  " + dsMsg[checkCode]);
 							/**校验数据完整性*/
 							if ((String.valueOf(dsMsg.length-3)).equals(dsMsg[checkCode])){
-									/**循环存入数据的编号和数据值*/
-									historicalData.setId(UniqueKey.genUniqueKey());
-									historicalData.setSnCode(dsSnCode);
-									historicalData.setProtocolVersion(dsProtocolVersion);
-								    historicalData.setDeviceData(dsHistoricalMsg);
+							/**循环存入数据的编号和数据值*/
+							historicalData.setId(UniqueKey.genUniqueKey());
+							historicalData.setSnCode(dsSnCode);
+							historicalData.setProtocolVersion(dsProtocolVersion);
+							historicalData.setDeviceData(dsHistoricalMsg);
+							historicalData.setDataTime(new Date(System.currentTimeMillis()));
 
-									historicalDataService.saveHistoricalData(historicalData);
-								try {
-									serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/"+dsSnCode+"/DataSaveDone");
-								} catch (MqttException e) {
-									e.printStackTrace();
-								}
+							historicalDataService.saveHistoricalData(historicalData);
+
+							try {
+								ServerServiceUtil s1 = new ServerServiceUtil();
+								s1.publish(new MqttMessage("1".getBytes()), "/" + dsSnCode + "/DataSaveDone");
+							} catch (MqttException e) {
+								e.printStackTrace();
+							}
+
 							}else {
 								try {
-									serverServiceUtil.publish(new MqttMessage("0".getBytes()),"/"+dsSnCode+"/DataSaveDone");
+									ServerServiceUtil serverServiceUtil2 = new ServerServiceUtil();
+									serverServiceUtil2.publish(new MqttMessage("0".getBytes()),"/"+dsSnCode+"/DataSaveDone");
 								} catch (MqttException e) {
 									e.printStackTrace();
 								}
+
 							}
 							break;
 
@@ -206,21 +220,33 @@ public class MqttDataServerApplication {
 							devAlarmData.setOffsetNumber(aOffset);
 							devAlarmData.setAlarmCode(aCode);
 							devAlarmData.setHandleStatus(0);
-							devAlarmData.setAlarmTime(new Date());
+							devAlarmData.setAlarmTime(new Date(System.currentTimeMillis()));
 							devAlarmDataService.saveDevAlarmData(devAlarmData);
 							/**取出报警码的详细信息*/
 							String alarmInfo = alarmMessageService.findAlarmInfo(aCode).getAlarmInfo();
 							/**构造报警数据*/
 							String alarmMessage = aSn+"_"+aProtocol+"_"+aOffset+"_"+alarmInfo+"_"+aCheck;
+							String devAlarmMessage = aOffset+"_"+alarmInfo+"_"+"1"+"_"+aCheck;
 
 							try {
-								serverServiceUtil.publish(new MqttMessage(alarmMessage.getBytes()),"/web/"+aSn+"/Alarm");
+//								ServerServiceUtil serverServiceUtil4 = new ServerServiceUtil();
+
+								new ServerServiceUtil().publish(new MqttMessage(alarmMessage.getBytes()),"/web/"+aSn+"/Alarm");
+//								serverServiceUtil4.publish(new MqttMessage(alarmMessage.getBytes()),"/web/"+aSn+"/Alarm");
+//								serverServiceUtil.publish(new MqttMessage(devAlarmMessage.getBytes()),"/"+aSn+"/Alarm");
+
+								new ServerServiceUtil().publish(new MqttMessage(devAlarmMessage.getBytes()),"/"+aSn+"/Alarm");
 							} catch (MqttException e) {
 								e.printStackTrace();
 							}
 							break;
+
+							default:
+								System.out.println("收到或发布的主题为：" + topic+"  "+"消息内容："+sMsg);
+								break;
 					}
 				}else{
+
 					System.out.println("收到或发布的主题为：" + topic+"  "+"消息内容："+sMsg);
 				}
 			}
@@ -253,7 +279,7 @@ public class MqttDataServerApplication {
 		devVerifyData.setId(UniqueKey.genUniqueKey());
 		devVerifyData.setSnCode(sn);
 		devVerifyData.setCheckCode(checkCode);
-		devVerifyData.setGenerateTime(new Date());
+		devVerifyData.setGenerateTime(new Date(System.currentTimeMillis()));
 		devVerifyData.setProtocolVersion(proVersion);
 
 		devVerifyDataService.saveDevVerifyData(devVerifyData);
