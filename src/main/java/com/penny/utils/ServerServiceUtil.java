@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 public class ServerServiceUtil {
     private MqttClient client;
     private MqttTopic topic;
-    private String Host = "tcp://47.94.242.70:61613";
+//    private String Host = "tcp://47.94.242.70:61613";
+    private String Host = "tcp://118.31.17.203:1883";
     private String clientId = "server";
-    public String topTopic = "/China/HuBei";
+//    public String topTopic = "/China/HuBei";
 
     /**构造方法ServerService()：通过MqttClient连接broker*/
     public ServerServiceUtil()throws MqttException{
@@ -27,8 +28,8 @@ public class ServerServiceUtil {
     public void connect(){
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(false);
-        options.setUserName("admin");
-        options.setPassword("password".toCharArray());
+//        options.setUserName("admin");
+//        options.setPassword("password".toCharArray());
         options.setConnectionTimeout(10);
         options.setKeepAliveInterval(20);
         try {
@@ -42,7 +43,9 @@ public class ServerServiceUtil {
 
     /**publish():发布消息方法*/
     public void publish(MqttMessage message,String secondTopic) throws MqttException{
-        topic = client.getTopic(topTopic+secondTopic);
+        topic = client.getTopic(secondTopic);
+//        topic = client.getTopic(topTopic+secondTopic);
+
         MqttDeliveryToken token = topic.publish(message);
         token.waitForCompletion();
         System.out.println("发布完成? "+token.isComplete());
