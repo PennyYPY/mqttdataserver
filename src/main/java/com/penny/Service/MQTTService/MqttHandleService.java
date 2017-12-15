@@ -7,7 +7,7 @@ package com.penny.Service.MQTTService;
  * 2、处理消息
  */
 public interface MqttHandleService {
-
+/**方的观点吧*/
     void handleTopic();
 
     void handleMessage();
