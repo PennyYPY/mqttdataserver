@@ -65,16 +65,21 @@ public class MqttDataServerApplication {
 		MyGateway gateway = context.getBean(MyGateway.class);
 		gateway.sentToMqtt("服务器运行，您好！");
 
-//		try {
-////			ServerServiceUtil serverServiceUtil = new ServerServiceUtil();
-////			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/runtime/switch");
+		/**
+		 * 测试Topic
+		 * */
+//
+		try {
+			ServerServiceUtil serverServiceUtil = new ServerServiceUtil();
+//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/DevRecv/cfg/req");
 ////			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/"+"HMITest001"+"/DataSaveDone");
 //
-//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/runtime/switch");
-//		} catch (MqttException e) {
-//			e.printStackTrace();
-//		}
+			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest002/DevRecv/runtime/switch");
+		} catch (MqttException e) {
 
+			e.printStackTrace();
+
+		}
 
 	}
 
@@ -84,9 +89,10 @@ public class MqttDataServerApplication {
 	@Bean
 	public MqttPahoClientFactory mqttPahoClientFactory(){
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-		factory.setServerURIs("tcp://47.94.242.70:61613");
-		factory.setUserName("admin");
-		factory.setPassword("password");
+//		factory.setServerURIs("tcp://47.94.242.70:61613");
+		factory.setServerURIs("tcp://118.31.17.203:1883");
+//		factory.setUserName("admin");
+//		factory.setPassword("password");
 		return factory;
 	}
 
@@ -117,18 +123,21 @@ public class MqttDataServerApplication {
 	}
 	@Bean
 	public MessageProducerSupport mqttInbound(){
+//		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
+//				"消费者"
+//				,mqttPahoClientFactory()
+//				,"/China/HuBei/sys/#");
+
 		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
 				"消费者"
 				,mqttPahoClientFactory()
-				,"/China/HuBei/#");
+				,"/sys/#");
 		adapter.setCompletionTimeout(5000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
 		adapter.setOutputChannel(mqttInputChannel());
 		return adapter;
 	}
-
-
 
 	/**处理的是双方发送的所有消息*/
 	@Bean
@@ -142,25 +151,22 @@ public class MqttDataServerApplication {
 				String topic = message.getHeaders().get("mqtt_topic").toString();
 				String sMsg = message.getPayload().toString();
 
-				String[] sTopic = topic.split("/");
-
-				String thirdTopic = sTopic[2];
-
-				if (thirdTopic.equals("sys")){
-
 					switch (topic) {
 						/**1、设备配置数据存储*/
-						case "China/HuBei/sys/reg":
+//						case "China/HuBei/sys/reg":
+						case "/sys/reg":
 							String[] rMsg = sMsg.split("_");
 							String rSnCode = rMsg[0];
 							String rCheckCode = rMsg[1];
 							String rProtocolVersion = rMsg[2];
 							/**存储设备配置相应数据*/
 							saveDevVerifyData(rSnCode, rCheckCode, rProtocolVersion);
-							System.out.println("收到:" + topic + "  " + rSnCode + rCheckCode + rProtocolVersion);
+							System.out.println("收到:" + topic + "  " + rSnCode+ "   "+ rCheckCode+ "   "+ rProtocolVersion);
 							break;
 						/**2、设备数据存储请求*/
-						case "China/HuBei/sys/DataSave":
+//						case "China/HuBei/sys/DataSave":
+						case "/sys/datasave":
+
 							/**将消息切割*/
 							String[] dsMsg = sMsg.split("_");
 							String dsSnCode = dsMsg[0];
@@ -185,16 +191,16 @@ public class MqttDataServerApplication {
 							historicalDataService.saveHistoricalData(historicalData);
 
 							try {
-								ServerServiceUtil s1 = new ServerServiceUtil();
-								s1.publish(new MqttMessage("1".getBytes()), "/" + dsSnCode + "/DataSaveDone");
+//								new ServerServiceUtil().publish(new MqttMessage("1".getBytes()), "/" + dsSnCode + "/DevRecv/DataSaveDone");
+								new ServerServiceUtil().publish(new MqttMessage("1".getBytes()), "/" + dsSnCode + "/DevRecv/DataSaveDone");
+
 							} catch (MqttException e) {
 								e.printStackTrace();
 							}
 
 							}else {
 								try {
-									ServerServiceUtil serverServiceUtil2 = new ServerServiceUtil();
-									serverServiceUtil2.publish(new MqttMessage("0".getBytes()),"/"+dsSnCode+"/DataSaveDone");
+									new ServerServiceUtil().publish(new MqttMessage("0".getBytes()),"/"+dsSnCode+"/DataSaveDone");
 								} catch (MqttException e) {
 									e.printStackTrace();
 								}
@@ -202,7 +208,13 @@ public class MqttDataServerApplication {
 							}
 							break;
 
-						case "China/HuBei/sys/Alarm":
+						case "China/HuBei/sys/heartbeat":
+
+
+							break;
+
+//						case "China/HuBei/sys/Alarm":
+						case "/sys/Alarm":
 
 							System.out.println(message);
 
@@ -229,26 +241,17 @@ public class MqttDataServerApplication {
 							String devAlarmMessage = aOffset+"_"+alarmInfo+"_"+"1"+"_"+aCheck;
 
 							try {
-//								ServerServiceUtil serverServiceUtil4 = new ServerServiceUtil();
-
 								new ServerServiceUtil().publish(new MqttMessage(alarmMessage.getBytes()),"/web/"+aSn+"/Alarm");
-//								serverServiceUtil4.publish(new MqttMessage(alarmMessage.getBytes()),"/web/"+aSn+"/Alarm");
-//								serverServiceUtil.publish(new MqttMessage(devAlarmMessage.getBytes()),"/"+aSn+"/Alarm");
-
-								new ServerServiceUtil().publish(new MqttMessage(devAlarmMessage.getBytes()),"/"+aSn+"/Alarm");
+								new ServerServiceUtil().publish(new MqttMessage(devAlarmMessage.getBytes()),"/"+aSn+"/DevRecv/Alarm");
 							} catch (MqttException e) {
 								e.printStackTrace();
 							}
 							break;
 
-							default:
-								System.out.println("收到或发布的主题为：" + topic+"  "+"消息内容："+sMsg);
-								break;
+						default:
+							System.out.println("收到或发布的主题为：" + topic+"  "+"消息内容："+sMsg);
+							break;
 					}
-				}else{
-
-					System.out.println("收到或发布的主题为：" + topic+"  "+"消息内容："+sMsg);
-				}
 			}
 		};
 	}
@@ -259,7 +262,7 @@ public class MqttDataServerApplication {
 		MqttPahoMessageHandler messageHandler =
 				new MqttPahoMessageHandler("client", mqttPahoClientFactory());
 		messageHandler.setAsync(true);
-		messageHandler.setDefaultTopic("/China/HuBei/hello/server/hi");
+		messageHandler.setDefaultTopic("/sys/hello/server/hi");
 		return messageHandler;
 	}
 
