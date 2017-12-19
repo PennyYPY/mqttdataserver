@@ -41,7 +41,7 @@ public class ProtocolConfigDetailData {
         this.isAlarmed = isAlarmed;
     }
 
-    public String getSnCode() {
+    public String getSnC3ode() {
         return snCode;
     }
 
