@@ -29,6 +29,7 @@ import org.springframework.messaging.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -49,6 +50,8 @@ public class MqttDataServerApplication {
 	/**设备报警类型相关*/
 	@Autowired
 	private AlarmMessageService alarmMessageService;
+	@Autowired
+	private SearchUserTelephoneService searchUserTelephoneService;
 
 	DevVerifyData devVerifyData = new DevVerifyData();
 	HistoricalData historicalData = new HistoricalData();
@@ -71,10 +74,10 @@ public class MqttDataServerApplication {
 //
 		try {
 			ServerServiceUtil serverServiceUtil = new ServerServiceUtil();
-//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest001/DevRecv/cfg/req");
-////			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/"+"HMITest001"+"/DataSaveDone");
-//
-			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest002/DevRecv/runtime/switch");
+			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest002/DevRecv/cfg/req");
+//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/"+"HMITest001"+"/DataSaveDone");
+
+//			serverServiceUtil.publish(new MqttMessage("1".getBytes()),"/HMITest002/DevRecv/runtime/switch");
 		} catch (MqttException e) {
 
 			e.printStackTrace();
@@ -89,10 +92,10 @@ public class MqttDataServerApplication {
 	@Bean
 	public MqttPahoClientFactory mqttPahoClientFactory(){
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-//		factory.setServerURIs("tcp://47.94.242.70:61613");
-		factory.setServerURIs("tcp://118.31.17.203:1883");
-//		factory.setUserName("admin");
-//		factory.setPassword("password");
+		factory.setServerURIs("tcp://47.94.242.70:61613");
+//		factory.setServerURIs("tcp://118.31.17.203:1883");
+		factory.setUserName("admin");
+		factory.setPassword("password");
 		return factory;
 	}
 
@@ -131,7 +134,7 @@ public class MqttDataServerApplication {
 		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
 				"消费者"
 				,mqttPahoClientFactory()
-				,"/sys/#");
+				,"/HMITest002/#");
 		adapter.setCompletionTimeout(5000);
 		adapter.setConverter(new DefaultPahoMessageConverter());
 		adapter.setQos(1);
@@ -167,12 +170,17 @@ public class MqttDataServerApplication {
 //						case "China/HuBei/sys/DataSave":
 						case "/sys/datasave":
 
+
+
 							/**将消息切割*/
 							String[] dsMsg = sMsg.split("_");
 							String dsSnCode = dsMsg[0];
 							String dsProtocolVersion = dsMsg[1];
 							String dsHistoricalMsg = dsMsg[2];
 							int checkCode = dsMsg.length - 1;
+
+							System.out.println("收到:" + topic + " " + dsSnCode + "  " + dsProtocolVersion + "  " + dsMsg[checkCode]);
+
 
 							for (int i = 3; i <= dsMsg.length - 2; i++) {
 								dsHistoricalMsg = dsHistoricalMsg + "_" + dsMsg[i];
@@ -246,6 +254,12 @@ public class MqttDataServerApplication {
 							} catch (MqttException e) {
 								e.printStackTrace();
 							}
+
+							/**向用户发送报警短信*/
+
+							List<String> telePhoneNum = searchUserTelephoneService.searchUserTelephone(aSn,1);
+
+
 							break;
 
 						default:

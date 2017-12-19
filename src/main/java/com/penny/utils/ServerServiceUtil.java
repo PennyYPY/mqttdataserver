@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 public class ServerServiceUtil {
     private MqttClient client;
     private MqttTopic topic;
-//    private String Host = "tcp://47.94.242.70:61613";
-    private String Host = "tcp://118.31.17.203:1883";
+    private String Host = "tcp://47.94.242.70:61613";
+//    private String Host = "tcp://118.31.17.203:1883";
     private String clientId = "server";
 //    public String topTopic = "/China/HuBei";
 
@@ -28,8 +28,8 @@ public class ServerServiceUtil {
     public void connect(){
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(false);
-//        options.setUserName("admin");
-//        options.setPassword("password".toCharArray());
+        options.setUserName("admin");
+        options.setPassword("password".toCharArray());
         options.setConnectionTimeout(10);
         options.setKeepAliveInterval(20);
         try {
